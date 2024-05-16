@@ -1,0 +1,16 @@
+{
+  "name": "cleaning4solo-server",
+  "version": "1.0.0",
+  "description": "cleaning4solo server API",
+  "main": "index.js",
+  "scripts": {
+    "dev": "SET NODE_ENV=development && nodemon ./src/server.js",
+    "prod": "node ./src/server.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.19.2",
+    "nodemon": "^3.1.0"
+  }
+}
