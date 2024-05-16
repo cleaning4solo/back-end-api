@@ -4,7 +4,7 @@
   "description": "cleaning4solo server API",
   "main": "index.js",
   "scripts": {
-    "dev": "SET NODE_ENV=development && nodemon ./src/server.js",
+    "dev": "SET NODE_ENV=development&&nodemon ./src/server.js",
     "prod": "node ./src/server.js"
   },
   "author": "",
