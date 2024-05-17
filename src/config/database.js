@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 require('dotenv').config();
 
-const databaseUrl = process.env.NODE_ENV !== 'development' ? process.env.MONGODB_URI : 'mongodb://localhost:27017';
+const databaseUrl = process.env.NODE_ENV !== 'development' ? process.env.MONGODB_URI : process.env.HOST;
 const database = async () => {
   try {
     const con = await mongoose.connect(databaseUrl);
