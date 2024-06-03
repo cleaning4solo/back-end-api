@@ -57,9 +57,25 @@ const updateEventById = async (req, res) => {
   }
 };
 
+const deleteEvent = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const deletedEvent = await EventModel.findByIdAndDelete(id);
+
+    if (!deletedEvent) {
+      return res.status(404).send({ message: 'Event not found' });
+    }
+    res.status(200).send({ message: 'Event deleted successfully' });
+  } catch (error) {
+    res.status(500).send({ message: 'Internal server error', error: error.message });
+  }
+};
+
 module.exports = {
   getAllEvents,
   createEvent,
   getSpecifiedEvent,
   updateEventById,
+  deleteEvent,
 };
