@@ -15,6 +15,10 @@ const eventSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    mapUrl: {
+      type: String,
+      required: true,
+    },
     location: {
       type: String,
       required: true,
