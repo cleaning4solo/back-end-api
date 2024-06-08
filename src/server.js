@@ -1,5 +1,15 @@
 const express = require('express');
 const cors = require('cors');
+const path = require('path');
+const admin = require('firebase-admin');
+// Inisialisasi Firebase Admin
+// Pastikan path ke file kredensial Firebase Anda benar
+const serviceAccount = require('./config/firebaseAdminConfig.json');
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+});
+
 const database = require('./config/database');
 const APIRoutes = require('./routes');
 require('dotenv').config();
