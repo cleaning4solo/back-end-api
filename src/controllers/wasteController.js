@@ -1,90 +1,99 @@
-const WasteModel = require('../models/wasteModel');
-const ActivityModel = require('../models/activityModel');
+const Waste = require('../models/wasteModel');
 
+// Create new waste
+const createWaste = async (req, res) => {
+  try {
+    const {
+      jenis, berat, asalLimbah, harga, emisiKarbon,
+    } = req.body;
+
+    const waste = new Waste({
+      jenis,
+      berat,
+      asalLimbah,
+      harga,
+      emisiKarbon,
+    });
+
+    await waste.save();
+    res.status(201).send(waste);
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
+// Get all wastes
 const getAllWastes = async (req, res) => {
   try {
-    const wastes = await WasteModel.find();
-    res.status(200).send({ message: 'success', wastes });
+    const wastes = await Waste.find();
+    res.status(200).send(wastes);
   } catch (error) {
-    res.status(500).send({ message: error.message });
+    res.status(500).send(error);
   }
 };
 
-const createWastes = async (req, res) => {
+// Get a single waste by ID
+const getWasteById = async (req, res) => {
   try {
-    const { wastes, activityName } = req.body;
+    const waste = await Waste.findById(req.params.id);
 
-    const activity = new ActivityModel({ name: activityName });
-    await activity.save();
-
-    const activityId = activity._id;
-
-    const wasteEntries = wastes.map((waste) => ({
-      ...waste,
-      activityId,
-      status: 'drafted', // Set status to 'drafted' when creating
-    }));
-
-    const data = await WasteModel.insertMany(wasteEntries);
-
-    res.status(201).send({
-      message: 'Waste has been created successfully',
-      data,
-    });
-  } catch (error) {
-    res.status(500).send({ message: error.message });
-    console.error('Error creating waste:', error);
-  }
-};
-
-const updateWasteById = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const updateData = req.body;
-
-    const updatedWaste = await WasteModel.findByIdAndUpdate(id, updateData, { new: true, runValidators: true });
-
-    if (!updatedWaste) {
+    if (!waste) {
       return res.status(404).send({ message: 'Waste not found' });
     }
-    const data = {
-      id: updatedWaste._id,
-    };
-    res.status(201).send({ message: 'Waste updated successfully', data });
+
+    res.status(200).send(waste);
   } catch (error) {
-    res.status(500).send({ message: 'Server error' });
-    console.error('Error updating waste:', error);
+    res.status(500).send(error);
   }
 };
 
+// Update a waste
+const updateWaste = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const {
+      jenis, berat, asalLimbah, harga, emisiKarbon,
+    } = req.body;
+
+    const waste = await Waste.findByIdAndUpdate(
+      id,
+      {
+        jenis, berat, asalLimbah, harga, emisiKarbon,
+      },
+      { new: true, runValidators: true },
+    );
+
+    if (!waste) {
+      return res.status(404).send({ message: 'Waste not found' });
+    }
+
+    res.status(200).send(waste);
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
+// Delete a waste
 const deleteWaste = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const deletedWaste = await WasteModel.findByIdAndDelete(id);
+    const waste = await Waste.findByIdAndDelete(id);
 
-    if (!deletedWaste) {
+    if (!waste) {
       return res.status(404).send({ message: 'Waste not found' });
     }
+
     res.status(200).send({ message: 'Waste deleted successfully' });
   } catch (error) {
-    res.status(500).send({ message: 'Internal server error', error: error.message });
-  }
-};
-
-const submitWastes = async (req, res) => {
-  try {
-    await WasteModel.updateMany({ status: 'drafted' }, { status: 'success' });
-    res.status(200).send({ message: 'All wastes submitted successfully' });
-  } catch (error) {
-    res.status(500).send({ message: error.message });
+    res.status(500).send(error);
   }
 };
 
 module.exports = {
+  createWaste,
   getAllWastes,
-  createWastes,
-  updateWasteById,
+  getWasteById,
+  updateWaste,
   deleteWaste,
-  submitWastes, // Export the new submitWastes method
 };
