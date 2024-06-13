@@ -4,12 +4,13 @@ const router = express.Router();
 const {
   createActivity, addWasteToActivity, getAllActivities, getWastesByActivityId, updateActivityStatus, fetchActivityDetails,
 } = require('../controllers/activityController');
+const { authenticateToken } = require('../middleware/authenticateToken');
 
-router.post('/', createActivity);
-router.post('/:activityId/waste', addWasteToActivity);
-router.get('/wastes/byActivity/:activityId', getWastesByActivityId);
-router.patch('/:id/status', updateActivityStatus);
-router.get('/:id', fetchActivityDetails);
-router.get('/', getAllActivities);
+router.post('/', authenticateToken, createActivity);
+router.post('/:activityId/waste', authenticateToken, addWasteToActivity);
+router.get('/wastes/byActivity/:activityId', authenticateToken, getWastesByActivityId);
+router.patch('/:id/status', authenticateToken, updateActivityStatus);
+router.get('/:id', authenticateToken, fetchActivityDetails);
+router.get('/', authenticateToken, getAllActivities);
 
 module.exports = router;
