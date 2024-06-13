@@ -49,7 +49,7 @@ async function deleteUser(req, res) {
 
 async function signup(req, res) {
   const {
-    email, password, googleId, username,
+    email, password, googleId, username, role,
   } = req.body;
 
   try {
@@ -65,16 +65,20 @@ async function signup(req, res) {
       if (userExists) {
         return res.status(409).send({ message: 'Pengguna sudah terdaftar dengan Google ID ini' });
       }
-      const newUser = new UserModel({ email, googleId, username });
+      const newUser = new UserModel({
+        email, googleId, username,
+      });
       await newUser.save();
-      const token = generateToken(newUser._id);
+      const token = generateToken(newUser._id, newUser.role);
       res.status(201).send({ message: 'Pendaftaran menggunakan Google berhasil', data: newUser, token });
     } else {
       // Pengguna mendaftar menggunakan email, password, dan username
       const hashedPassword = await bcrypt.hash(password, 8);
-      const newUser = new UserModel({ email, password: hashedPassword, username });
+      const newUser = new UserModel({
+        email, password: hashedPassword, username, role,
+      });
       await newUser.save();
-      const token = generateToken(newUser._id);
+      const token = generateToken(newUser._id, newUser.role);
       res.status(201).send({ message: 'Pendaftaran berhasil', data: newUser, token });
     }
   } catch (error) {
@@ -104,7 +108,7 @@ async function login(req, res) {
         return res.status(400).send({ message: 'Password salah' });
       }
     }
-    const token = generateToken(user._id);
+    const token = generateToken(user._id, user.role);
     res.send({ message: 'Login berhasil', data: user, token });
   } catch (error) {
     res.status(500).send({ message: 'Gagal login', error: error.message });

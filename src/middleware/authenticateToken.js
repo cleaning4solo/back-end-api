@@ -28,10 +28,10 @@ function authenticateToken(req, res, next) {
 }
 
 // Fungsi untuk menghasilkan token
-function generateToken(userId) {
+function generateToken(userId, role) {
   const secretKey = process.env.JWT_SECRET; // Gunakan variabel lingkungan untuk secret key
   const expiresIn = '1h'; // Durasi token
-  return jwt.sign({ _id: userId }, secretKey, { expiresIn });
+  return jwt.sign({ _id: userId, role }, secretKey, { expiresIn });
 }
 
 module.exports = { authenticateToken, generateToken };
