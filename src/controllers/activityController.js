@@ -6,15 +6,14 @@ const User = require('../models/userModel');
 const createActivity = async (req, res) => {
   try {
     const userExists = await User.findById(req.body.userId);
-
     if (!userExists) {
       return res.status(404).send({ message: 'User tidak ditemukan' });
     }
     const {
-      aktivitas, totalJual, totalEmisiKarbon, statusAktivitas,
+      aktivitas, totalJual, totalEmisiKarbon, statusAktivitas, userId,
     } = req.body;
     const activity = new Activity({
-      aktivitas, totalJual, totalEmisiKarbon, statusAktivitas, wasteIds: [],
+      aktivitas, totalJual, totalEmisiKarbon, statusAktivitas, wasteIds: [], userId,
     });
     await activity.save();
     res.status(201).send(activity);
@@ -26,11 +25,6 @@ const createActivity = async (req, res) => {
 // Add waste entry to an activity
 const addWasteToActivity = async (req, res) => {
   try {
-    const userExists = await User.findById(req.body.userId);
-
-    if (!userExists) {
-      return res.status(404).send({ message: 'User tidak ditemukan' });
-    }
     const {
       activityId, jenis, berat, asalLimbah, harga, emisiKarbon,
     } = req.body;
@@ -54,11 +48,6 @@ const addWasteToActivity = async (req, res) => {
 
 const getWastesByActivityId = async (req, res) => {
   try {
-    const userExists = await User.findById(req.body.userId);
-
-    if (!userExists) {
-      return res.status(404).send({ message: 'User tidak ditemukan' });
-    }
     const { activityId } = req.params;
     const activity = await Activity.findById(activityId).populate('wasteIds');
     if (!activity) {
@@ -72,11 +61,6 @@ const getWastesByActivityId = async (req, res) => {
 
 const getAllActivities = async (req, res) => {
   try {
-    const userExists = await User.findById(req.body.userId);
-
-    if (!userExists) {
-      return res.status(404).send({ message: 'User tidak ditemukan' });
-    }
     const activities = await Activity.find().populate('wasteIds');
     res.status(200).send(activities);
   } catch (error) {
@@ -86,11 +70,6 @@ const getAllActivities = async (req, res) => {
 
 const updateActivityStatus = async (req, res) => {
   try {
-    const userExists = await User.findById(req.body.userId);
-
-    if (!userExists) {
-      return res.status(404).send({ message: 'User tidak ditemukan' });
-    }
     const { id } = req.params;
     const { statusAktivitas } = req.body;
 
@@ -112,11 +91,6 @@ const updateActivityStatus = async (req, res) => {
 
 const fetchActivityDetails = async (req, res) => {
   try {
-    const userExists = await User.findById(req.body.userId);
-
-    if (!userExists) {
-      return res.status(404).send({ message: 'User tidak ditemukan' });
-    }
     const { id } = req.params;
 
     // Find activity by ID in the database

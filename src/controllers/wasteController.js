@@ -5,12 +5,11 @@ const User = require('../models/userModel');
 const createWaste = async (req, res) => {
   try {
     const userExists = await User.findById(req.body.userId);
-
     if (!userExists) {
       return res.status(404).send({ message: 'User tidak ditemukan' });
     }
     const {
-      jenis, berat, asalLimbah, harga, emisiKarbon,
+      jenis, berat, asalLimbah, harga, emisiKarbon, userId,
     } = req.body;
 
     const waste = new Waste({
@@ -19,6 +18,7 @@ const createWaste = async (req, res) => {
       asalLimbah,
       harga,
       emisiKarbon,
+      userId,
     });
 
     await waste.save();
@@ -31,11 +31,6 @@ const createWaste = async (req, res) => {
 // Get all wastes
 const getAllWastes = async (req, res) => {
   try {
-    const userExists = await User.findById(req.body.userId);
-
-    if (!userExists) {
-      return res.status(404).send({ message: 'User tidak ditemukan' });
-    }
     const wastes = await Waste.find();
     res.status(200).send(wastes);
   } catch (error) {
@@ -46,11 +41,6 @@ const getAllWastes = async (req, res) => {
 // Get a single waste by ID
 const getWasteById = async (req, res) => {
   try {
-    const userExists = await User.findById(req.body.userId);
-
-    if (!userExists) {
-      return res.status(404).send({ message: 'User tidak ditemukan' });
-    }
     const waste = await Waste.findById(req.params.id);
 
     if (!waste) {
@@ -66,11 +56,6 @@ const getWasteById = async (req, res) => {
 // Update a waste
 const updateWaste = async (req, res) => {
   try {
-    const userExists = await User.findById(req.body.userId);
-
-    if (!userExists) {
-      return res.status(404).send({ message: 'User tidak ditemukan' });
-    }
     const { id } = req.params;
     const {
       jenis, berat, asalLimbah, harga, emisiKarbon,
@@ -97,11 +82,6 @@ const updateWaste = async (req, res) => {
 // Delete a waste
 const deleteWaste = async (req, res) => {
   try {
-    const userExists = await User.findById(req.body.userId);
-
-    if (!userExists) {
-      return res.status(404).send({ message: 'User tidak ditemukan' });
-    }
     const { id } = req.params;
 
     const waste = await Waste.findByIdAndDelete(id);
