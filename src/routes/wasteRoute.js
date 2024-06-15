@@ -13,7 +13,7 @@ const { authenticateToken } = require('../middleware/authenticateToken');
 router.post('/', authenticateToken, createWaste);
 router.get('/', authenticateToken, getAllWastes);
 router.get('/:id', authenticateToken, getWasteById);
-router.put('/:id', authenticateToken, updateWaste);
-router.delete('/:id', authenticateToken, deleteWaste);
+router.put('/:id', updateWaste);
+router.delete('/:id', deleteWaste);
 
 module.exports = router;
