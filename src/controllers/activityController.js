@@ -25,15 +25,19 @@ const createActivity = async (req, res) => {
 // Add waste entry to an activity
 const addWasteToActivity = async (req, res) => {
   try {
+    const userExists = await User.findById(req.body.userId);
+    if (!userExists) {
+      return res.status(404).send({ message: 'User tidak ditemukan' });
+    }
     const {
-      activityId, jenis, berat, asalLimbah, harga, emisiKarbon,
+      activityId, jenis, berat, asalLimbah, harga, emisiKarbon, userId,
     } = req.body;
-    const activity = await Activity.findById(activityId);
+    const activity = await Activity.findById(activityId) || userId;
     if (!activity) {
       return res.status(404).send({ error: 'Activity not found' });
     }
     const waste = new Waste({
-      jenis, berat, asalLimbah, harga, emisiKarbon,
+      jenis, berat, asalLimbah, harga, emisiKarbon, userId,
     });
     await waste.save();
     activity.wasteIds.push(waste._id);
@@ -48,8 +52,8 @@ const addWasteToActivity = async (req, res) => {
 
 const getWastesByActivityId = async (req, res) => {
   try {
-    const { activityId } = req.params;
-    const activity = await Activity.findById(activityId).populate('wasteIds');
+    const { activityId, userId } = req.params;
+    const activity = await Activity.findById(activityId || userId).populate('wasteIds');
     if (!activity) {
       return res.status(404).send({ error: 'Activity not found' });
     }

@@ -9,7 +9,7 @@ const { authenticateToken } = require('../middleware/authenticateToken');
 router.post('/', authenticateToken, createActivity);
 router.post('/:activityId/waste', authenticateToken, addWasteToActivity);
 router.get('/wastes/byActivity/:activityId', authenticateToken, getWastesByActivityId);
-router.patch('/:id/status', authenticateToken, updateActivityStatus);
+router.patch('/:id/status', updateActivityStatus);
 router.get('/:id', authenticateToken, fetchActivityDetails);
 router.get('/', getAllActivities);
 
