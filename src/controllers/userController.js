@@ -17,7 +17,7 @@ async function getUserById(req, res) {
     if (!user) {
       return res.status(404).send({ message: 'User tidak ditemukan' });
     }
-    res.send({ message: 'User berhasil ditemukan', data: user });
+    res.status(200).send({ message: 'User berhasil ditemukan', data: user });
   } catch (error) {
     res.status(500).send({ message: 'Gagal mendapatkan user', error: error.message });
   }
@@ -29,7 +29,7 @@ async function updateUser(req, res) {
     if (!user) {
       return res.status(404).send({ message: 'User tidak ditemukan' });
     }
-    res.send({ message: 'User berhasil diperbarui', data: user });
+    res.status(200).send({ message: 'User berhasil diperbarui', data: user });
   } catch (error) {
     res.status(400).send({ message: 'Gagal memperbarui user', error: error.message });
   }
@@ -41,7 +41,7 @@ async function deleteUser(req, res) {
     if (!user) {
       return res.status(404).send({ message: 'User tidak ditemukan' });
     }
-    res.status(204).send({ message: 'User berhasil dihapus' });
+    res.status(200).send({ message: 'User berhasil dihapus' });
   } catch (error) {
     res.status(500).send({ message: 'Gagal menghapus user', error: error.message });
   }
@@ -49,7 +49,7 @@ async function deleteUser(req, res) {
 
 async function signup(req, res) {
   const {
-    email, password, googleId, username, role,
+    email, password, username, role,
   } = req.body;
 
   try {
@@ -59,57 +59,35 @@ async function signup(req, res) {
       return res.status(409).send({ message: 'Username sudah terdaftar' });
     }
 
-    if (googleId) {
-      // Pengguna mendaftar menggunakan Google
-      const userExists = await UserModel.findOne({ googleId });
-      if (userExists) {
-        return res.status(409).send({ message: 'Pengguna sudah terdaftar dengan Google ID ini' });
-      }
-      const newUser = new UserModel({
-        email, googleId, username,
-      });
-      await newUser.save();
-      const token = generateToken(newUser._id, newUser.role);
-      res.status(201).send({ message: 'Pendaftaran menggunakan Google berhasil', data: newUser, token });
-    } else {
-      // Pengguna mendaftar menggunakan email, password, dan username
-      const hashedPassword = await bcrypt.hash(password, 8);
-      const newUser = new UserModel({
-        email, password: hashedPassword, username, role,
-      });
-      await newUser.save();
-      const token = generateToken(newUser._id, newUser.role);
-      res.status(201).send({ message: 'Pendaftaran berhasil', data: newUser, token });
-    }
+    // Pengguna mendaftar menggunakan email, password, dan username
+    const hashedPassword = await bcrypt.hash(password, 8);
+    const newUser = new UserModel({
+      email, password: hashedPassword, username, role,
+    });
+    await newUser.save();
+    const token = generateToken(newUser._id, newUser.role);
+    res.status(201).send({ message: 'Pendaftaran berhasil', data: newUser, token });
   } catch (error) {
     res.status(400).send({ message: 'Gagal mendaftar', error: error.message });
   }
 }
 
 async function login(req, res) {
-  const { email, password, googleId } = req.body;
+  const { email, password } = req.body;
 
   try {
-    let user;
-    if (googleId) {
-      // Login menggunakan Google ID
-      user = await UserModel.findOne({ googleId });
-      if (!user) {
-        return res.status(404).send({ message: 'Google ID tidak terdaftar' });
-      }
-    } else {
-      // Login menggunakan email dan password
-      user = await UserModel.findOne({ email });
-      if (!user) {
-        return res.status(404).send({ message: 'Email tidak terdaftar' });
-      }
-      const isPasswordValid = await bcrypt.compare(password, user.password);
-      if (!isPasswordValid) {
-        return res.status(400).send({ message: 'Password salah' });
-      }
+    // Login menggunakan email dan password
+    const user = await UserModel.findOne({ email });
+    if (!user) {
+      return res.status(404).send({ message: 'Email tidak terdaftar' });
     }
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      return res.status(400).send({ message: 'Password salah' });
+    }
+
     const token = generateToken(user._id, user.role);
-    res.send({ message: 'Login berhasil', data: user, token });
+    res.status(200).send({ message: 'Login berhasil', data: user, token });
   } catch (error) {
     res.status(500).send({ message: 'Gagal login', error: error.message });
   }
