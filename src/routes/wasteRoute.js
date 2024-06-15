@@ -2,17 +2,18 @@ const express = require('express');
 
 const router = express.Router();
 const {
+  createWaste,
   getAllWastes,
-  createWastes,
-  updateWasteById,
+  getWasteById,
+  updateWaste,
   deleteWaste,
-  submitWastes,
 } = require('../controllers/wasteController');
+const { authenticateToken } = require('../middleware/authenticateToken');
 
-router.route('/').get(getAllWastes);
-router.route('/').post(createWastes);
-router.route('/:id').put(updateWasteById);
-router.route('/:id').delete(deleteWaste);
-router.route('/').post(submitWastes);
+router.post('/', authenticateToken, createWaste);
+router.get('/', authenticateToken, getAllWastes);
+router.get('/:id', authenticateToken, getWasteById);
+router.put('/:id', authenticateToken, updateWaste);
+router.delete('/:id', authenticateToken, deleteWaste);
 
 module.exports = router;
