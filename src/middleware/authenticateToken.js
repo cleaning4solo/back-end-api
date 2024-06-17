@@ -1,5 +1,4 @@
 const jwt = require('jsonwebtoken');
-const admin = require('firebase-admin');
 
 function authenticateToken(req, res, next) {
   const authHeader = req.headers.authorization;
@@ -9,22 +8,14 @@ function authenticateToken(req, res, next) {
     return res.status(401).send({ message: 'Token diperlukan' });
   }
 
-  // Coba verifikasi sebagai token Firebase terlebih dahulu
-  admin.auth().verifyIdToken(token)
-    .then((decodedToken) => {
-      req.user = decodedToken;
-      next();
-    })
-    .catch((firebaseError) => {
-      // Jika gagal, coba verifikasi sebagai JWT biasa
-      jwt.verify(token, process.env.JWT_SECRET, (jwtError, user) => {
-        if (jwtError) {
-          return res.status(403).send({ message: 'Token tidak valid atau telah kadaluarsa' });
-        }
-        req.user = user;
-        next();
-      });
-    });
+  // Verifikasi sebagai JWT
+  jwt.verify(token, process.env.JWT_SECRET, (jwtError, user) => {
+    if (jwtError) {
+      return res.status(403).send({ message: 'Token tidak valid atau telah kadaluarsa' });
+    }
+    req.user = user;
+    next();
+  });
 }
 
 // Fungsi untuk menghasilkan token
