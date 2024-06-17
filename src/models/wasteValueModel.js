@@ -1,17 +1,16 @@
 const mongoose = require('mongoose');
 
-const blogSchema = new mongoose.Schema(
+const wasteValueSchema = new mongoose.Schema(
   {
-    title: {
-      type: String,
-      maxlength: 255,
-      required: true,
-    },
-    image: {
+    jenisSampah: {
       type: String,
       required: true,
     },
-    content: {
+    harga: {
+      type: String,
+      required: true,
+    },
+    emisi: {
       type: String,
       required: true,
     },
@@ -21,5 +20,5 @@ const blogSchema = new mongoose.Schema(
   },
 );
 
-const Blog = mongoose.model('Blog', blogSchema);
-module.exports = Blog;
+const WasteValueModel = mongoose.model('WasteValue', wasteValueSchema);
+module.exports = WasteValueModel;
